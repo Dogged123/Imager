@@ -10,7 +10,7 @@ public class ImageReader {
     public static BufferedImage readFromFile(String fileName) {
         BufferedImage image = null;
         try {
-            File file = new File("C:\\Users\\isaac\\IntellIJ Projects\\Imager\\src\\main\\Images\\" + fileName);
+            File file = new File("plugins/Imager/Images/" + fileName);
 
             image = ImageIO.read(file);
         } catch (IOException e) {
@@ -35,7 +35,7 @@ public class ImageReader {
 
     public static void writeToFile(BufferedImage image, String fileName) {
         try {
-            File output = new File("Images\\" + fileName);
+            File output = new File("plugins/Imager/Images/" + fileName);
 
             ImageIO.write(image, fileName.substring(fileName.indexOf(".") + 1), output);
 

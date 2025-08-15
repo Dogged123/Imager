@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,18 +26,17 @@ public class ImageCommand implements CommandExecutor, Listener {
 
     public ImageCommand(Imager imager) {
         imager.getCommand("image").setExecutor(this);
+        imager.getCommand("image").setTabCompleter(new CommandTabCompleter());
         imager.getServer().getPluginManager().registerEvents(this, imager);
         plugin = imager;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player p)) {
             sender.sendMessage("§cYou must be a player to use this command");
             return true;
         }
-
-        Player p = (Player) sender;
 
         if (args.length == 0) {
             p.sendMessage("§cPlease specify the name of the image you want to display");
@@ -77,7 +77,7 @@ public class ImageCommand implements CommandExecutor, Listener {
                     BufferedImage image = ImageReader.readFromFile(imageOutputPath);
 
                     if (image != null) {
-                        ImageReader.resize(image, 64, 64);
+                        image = ImageReader.resize(image, 64, 64);
 
                         Map<Location, Particle.DustOptions> particleLocations = calculateLocations(image, p, loc);
 
@@ -88,7 +88,12 @@ public class ImageCommand implements CommandExecutor, Listener {
                 }
             }.runTaskTimer(plugin, 0L, 1L);
         } else {
-            BufferedImage image = ImageReader.readFromFile(args[0] + ".png");
+            if (!Arrays.asList(FileIO.getDirectoryContents("plugins/Imager/Images")).contains(args[0])) {
+                p.sendMessage("§cExisting Images: " + Arrays.toString(FileIO.getDirectoryContents("plugins/Imager/Images")));
+                return true;
+            }
+
+            BufferedImage image = ImageReader.readFromFile(args[0]);
             Map<Location, Particle.DustOptions> particleLocations = calculateLocations(image, p);
             p.getInventory().addItem(new ItemStack(Material.STICK));
 
