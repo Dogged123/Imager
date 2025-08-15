@@ -1,0 +1,7 @@
+name: Imager
+version: '${project.version}'
+main: dogged.imager.Imager
+api-version: '1.21'
+commands:
+  image:
+    description: converts an image to a particle display in minecraft
